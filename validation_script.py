@@ -41,9 +41,10 @@ def starpu_reading_GPUS():
 
 
 if __name__ == "__main__":
-    starpu.init()
-    asyncio.run(main())
     validate_nvidia_smi()
     cudaq_reading_GPUS()
+    starpu_reading_GPUS()
     print("Validation script executed successfully.")
+    starpu.init()
+    asyncio.run(main())
     starpu.shutdown()
