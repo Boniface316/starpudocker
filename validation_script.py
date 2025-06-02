@@ -18,7 +18,7 @@ async def main():
 
 def validate_nvidia_smi():
     try:
-        res = run("nvidia-smi --query-gpu=gpu_name --format=csv,noheader")
+        res = run("nvidia-smi --query-gpu=gpu_name --format=csv,noheader", hide=True)
         GPU_NAME = res.stdout.strip()
         assert GPU_NAME, "No GPU detected by nvidia-smi"
     except Exception as e:
@@ -32,8 +32,8 @@ def cudaq_reading_GPUS():
 
 def starpu_reading_GPUS():
     try:
-        res = run("starpu_machine_display -w CUDA -topology")
-        number_of_GPUS = res.stdout.strip("\n")[1]
+        res = run("starpu_machine_display -w CUDA -n", hide=True)
+        number_of_GPUS = res.stdout.strip().split("\n")[1][0]
         assert int(number_of_GPUS) > 0, "No GPUs detected by StarPU"
     except Exception as e:
         print(f"Error executing starpu_machine_display: {e}")
