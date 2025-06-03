@@ -57,7 +57,16 @@ CMD . ./bin/starpu_env && exec bash
 4. CUDA-Q gpu - ❌
     * CUDA-Q was not installed
 5. `starpu_machine_display -w CUDA -notopology` - ❌
-    * Returns "No CUDA worker"
+### Output
+```
+[starpu][check_bus_config_file] No performance model for the bus, calibrating...
+[starpu][benchmark_all_memory_nodes] CUDA 0...
+[starpu][measure_bandwidth_between_host_and_dev] with NUMA 0...
+[starpu][benchmark_all_memory_nodes] OpenCL 0...
+[starpu][measure_bandwidth_between_host_and_dev] with NUMA 0...
+*** stack smashing detected ***: terminated
+Aborted (core dumped)
+```
 
 ## Next steps:
 Add CUDA-Q to this docker image.
