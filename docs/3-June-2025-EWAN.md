@@ -1,3 +1,11 @@
+# Dockerfile from scratch
+
+The objective of this approach is to create a dockerfile that runs starpu from scratch.
+`
+
+## Dockerfile
+
+```Docker
 FROM ubuntu:22.04
 
 RUN apt-get update && \
@@ -34,3 +42,22 @@ RUN ../configure --enable-starpupy --enable-blocking-drivers --prefix=/root/usr/
 
 WORKDIR /root/usr/starpu
 CMD . ./bin/starpu_env && exec bash
+```
+
+## Approach:
+1. Use the provided Dockerfile
+2. Build the image
+3. `docker run --gpus all -it -v "$(pwd)":/workspace starpuoriginal`
+
+## Results:
+1. `nvidia-smi` - ✅
+2. `python3 -c "import starpu; import cudaq` - ❌
+    * CUDA-Q not installed, importing starpu works
+3. Run StarPUPY example - ✅
+4. CUDA-Q gpu - ❌
+    * CUDA-Q was not installed
+5. `starpu_machine_display -w CUDA -notopology` - ❌
+    * Returns "No CUDA worker"
+
+## Next steps:
+Add CUDA-Q to this docker image.
