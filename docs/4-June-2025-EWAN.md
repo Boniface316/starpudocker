@@ -1,0 +1,70 @@
+# Dockerfile from scratch
+
+The objective of this modification is to address the issues with StarPU reading the GPU present in my previous file by switching the StarPU version to 1.4.7 rather than using the master.
+
+## Dockerfile
+
+```Docker
+FROM ubuntu:22.04
+
+RUN apt-get update && \
+    apt-get install -y \
+        build-essential \
+        git \
+        autoconf \
+        automake \
+        pkg-config \
+        libtool libtool-bin \
+        libhwloc-dev \
+        libnuma-dev \
+        python3 \
+        python3-pip \
+        nvidia-cuda-toolkit \
+        && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /root
+RUN git clone https://gitlab.inria.fr/starpu/starpu.git
+WORKDIR /root/starpu
+RUN git fetch --all --tags --prune
+RUN git checkout tags/starpu-1.4.7
+
+RUN ./autogen.sh && mkdir build
+WORKDIR /root/starpu/build
+
+RUN pip3 install joblib && \
+    pip3 install cloudpickle && \
+    pip3 install numpy && \
+    pip3 install invoke
+
+RUN ../configure --enable-starpupy --enable-blocking-drivers --prefix=/root/usr/starpu&& \
+    make && \
+    make install
+
+WORKDIR /workspace
+CMD . /root/usr/starpu/bin/starpu_env && exec bash && cd /workspace
+```
+
+## Approach:
+1. Use the provided Dockerfile
+2. Build the image
+3. `docker run --gpus all -it -v "$(pwd)":/workspace starpuoriginal`
+
+## Results:
+1. `nvidia-smi` - ✅
+2. `python3 -c "import starpu; import cudaq` - ❌
+    * CUDA-Q not installed, importing starpu works
+3. Run StarPUPY example - ✅
+4. CUDA-Q gpu - ❌
+    * CUDA-Q was not installed
+5. `starpu_machine_display -w CUDA -notopology` - ✅
+
+## Note
+Running anything with starpu produces the following warnings:
+```
+[starpu][_starpu_init_cuda_config] Warning: could not find location of CUDA0, do you have the hwloc CUDA plugin installed?
+[starpu][initialize_lws_policy] Warning: you are running the default lws scheduler, which is not a very smart scheduler, while the system has GPUs or several memory nodes. Make sure to read the StarPU documentation about adding performance models in order to be able to use the dmda or dmdas scheduler instead.
+[starpu][_starpu_cuda_driver_init] Warning: reducing STARPU_CUDA_PIPELINE to 0 because blocking drivers are enabled (and simgrid is not enabled)
+```
+
+## Next steps:
+Fix the warnings, then add CUDA-Q to this docker image.
