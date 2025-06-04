@@ -2,6 +2,8 @@
 
 The goal of this repo is to create docker file that can run StarPU and CUDA-Q. Image registry.gitlab.inria.fr/starpu/starpu-docker/starpu:1.4.7 will be merged with nvcr.io/nvidia/quantum/cuda-quantum:cu12-0.11.0
 
+StarPU docker repo: https://gitlab.inria.fr/starpu/starpu-docker
+
 ## Success criteria
 
 This container is considered a success, after achieve all these objectives:
