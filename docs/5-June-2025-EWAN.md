@@ -65,8 +65,8 @@ WORKDIR /workspace
 6. `python3 validation_script.py` ✅
 
 ## Note
-In order to get rid of the warning `[starpu][_starpu_init_cuda_config] Warning: could not find location of CUDA0, do you have the hwloc CUDA plugin installed?`, I used the `--without-hwloc` option when configuring StarPU.\n
-This is a bad solution, since according to StarPU documentation, `hwloc` will make it run faster.\n
+In order to get rid of the warning `[starpu][_starpu_init_cuda_config] Warning: could not find location of CUDA0, do you have the hwloc CUDA plugin installed?`, I used the `--without-hwloc` option when configuring StarPU.\
+This is a bad solution, since according to StarPU documentation, `hwloc` will make it run faster.\
 It seems that the issue is that `hwloc` cannot detect the GPU. Running `lstopo -.txt` in the Docker container does not show the GPU, but running it outside of the container does show the GPU. I tried installing hwloc with the `--enable-cuda` configuration option in this container, and still got the warning. I tried doing the same in a separate container and still could not see the GPU when running `lstopo -.txt`. StarPU is able to detect the GPU, so the issue is solely with hwloc.
 
 ## Next steps:
